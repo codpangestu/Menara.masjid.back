@@ -1,0 +1,2497 @@
+{
+  "info": {
+    "_postman_id": "menara-api-collection",
+    "name": "MENARA API v2.0.0",
+    "description": "Koleksi Postman untuk MENARA API — Microservice (5 Services)\n\n## Service Mapping\n- Auth Service (port 8001): Auth, Users\n- Masjid Service (port 8002): Masjid, Wilayah, Rekap\n- Content Service (port 8003): Content Publik\n- Transaction Service (port 8004): BukuKas, Sync\n- Admin Service (port 8005): Admin CRUD, Master Data\n\n## Cara Penggunaan\n1. Import collection dan environment ke Postman\n2. Pilih environment \"MENARA API - Local\"\n3. Setiap folder sudah指向 service URL yang sesuai\n4. Login via Auth Service (port 8001) untuk dapat token\n5. Token otomatis terisi ke environment",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "auth_url",
+      "value": "http://localhost:8001",
+      "type": "string"
+    },
+    {
+      "key": "masjid_url",
+      "value": "http://localhost:8002",
+      "type": "string"
+    },
+    {
+      "key": "content_url",
+      "value": "http://localhost:8003",
+      "type": "string"
+    },
+    {
+      "key": "transaction_url",
+      "value": "http://localhost:8004",
+      "type": "string"
+    },
+    {
+      "key": "admin_url",
+      "value": "http://localhost:8005",
+      "type": "string"
+    },
+    {
+      "key": "api_key",
+      "value": "menara23apikey",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "🏠 Health & Root",
+      "description": "Endpoint kesehatan dan informasi dasar aplikasi",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "health"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Root / Info Aplikasi",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                ""
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🔐 Authentication",
+      "description": "Login, register, dan manajemen sesi pengguna",
+      "item": [
+        {
+          "name": "Login (Semua User)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const jsonData = pm.response.json();",
+                  "",
+                  "if (pm.response.code === 200 && jsonData.access_token) {",
+                  "    pm.environment.set(\"token\", jsonData.access_token);",
+                  "    console.log(\"Token berhasil di-set:\", jsonData.access_token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"admin@baznas.go.id\",\n    \"password\": \"menara23\"\n}"
+            },
+            "url": {
+              "raw": "{{auth_url}}/api/v1/login",
+              "host": [
+                "{{auth_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Login Admin Masjid",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const jsonData = pm.response.json();",
+                  "",
+                  "if (pm.response.code === 200 && jsonData.access_token) {",
+                  "    pm.environment.set(\"token\", jsonData.access_token);",
+                  "    console.log(\"Token berhasil di-set:\", jsonData.access_token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"admin_masjid@example.com\",\n    \"password\": \"menara23\"\n}"
+            },
+            "url": {
+              "raw": "{{auth_url}}/api/v1/login/admin-masjid",
+              "host": [
+                "{{auth_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "login",
+                "admin-masjid"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Login Admin Pusat",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const jsonData = pm.response.json();",
+                  "",
+                  "if (pm.response.code === 200 && jsonData.access_token) {",
+                  "    pm.environment.set(\"token\", jsonData.access_token);",
+                  "    console.log(\"Token berhasil di-set:\", jsonData.access_token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"admin_pusat@baznas.go.id\",\n    \"password\": \"menara23\"\n}"
+            },
+            "url": {
+              "raw": "{{auth_url}}/api/v1/login/admin-pusat",
+              "host": [
+                "{{auth_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "login",
+                "admin-pusat"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Register User (Mobile)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id_jalur_akses\": \"M001\",\n    \"nama\": \"Nama User\",\n    \"jk\": \"Laki-laki\",\n    \"alamat\": \"Jl. Contoh No. 123\",\n    \"email\": \"user@example.com\",\n    \"nohp\": \"081234567890\",\n    \"kode_org_baznas\": \"\",\n    \"id_labels\": 1,\n    \"catatan\": \"\"\n}"
+            },
+            "url": {
+              "raw": "{{auth_url}}/api/v1/register/user",
+              "host": [
+                "{{auth_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "register",
+                "user"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Current User (Profile)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{auth_url}}/api/v1/me",
+              "host": [
+                "{{auth_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{auth_url}}/api/v1/logout",
+              "host": [
+                "{{auth_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "logout"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📍 Wilayah",
+      "description": "Data wilayah: provinsi, kabupaten/kota, kecamatan, kelurahan/desa",
+      "item": [
+        {
+          "name": "Provinsi - List",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{masjid_url}}/api/v1/provinsi",
+              "host": [
+                "{{masjid_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "provinsi"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Provinsi - By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{masjid_url}}/api/v1/provinsi?id=1",
+              "host": [
+                "{{masjid_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "provinsi"
+              ],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Kabupaten/Kota - List",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{masjid_url}}/api/v1/kabupaten-kota",
+              "host": [
+                "{{masjid_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "kabupaten-kota"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Kabupaten/Kota - By Provinsi",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{masjid_url}}/api/v1/kabupaten-kota?id_provinsi=1",
+              "host": [
+                "{{masjid_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "kabupaten-kota"
+              ],
+              "query": [
+                {
+                  "key": "id_provinsi",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Kecamatan - List",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{masjid_url}}/api/v1/kecamatan",
+              "host": [
+                "{{masjid_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "kecamatan"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Kecamatan - By Kabupaten/Kota",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{masjid_url}}/api/v1/kecamatan?id_kabupaten_kota=1",
+              "host": [
+                "{{masjid_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "kecamatan"
+              ],
+              "query": [
+                {
+                  "key": "id_kabupaten_kota",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Kelurahan/Desa - List",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{masjid_url}}/api/v1/kelurahan-desa",
+              "host": [
+                "{{masjid_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "kelurahan-desa"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Kelurahan/Desa - By Kecamatan",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{masjid_url}}/api/v1/kelurahan-desa?id_kecamatan=1",
+              "host": [
+                "{{masjid_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "kelurahan-desa"
+              ],
+              "query": [
+                {
+                  "key": "id_kecamatan",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📋 Master Data",
+      "description": "Data master: levels, labels, jenis dana, jenis harta, kategori, tema",
+      "item": [
+        {
+          "name": "Levels",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{admin_url}}/api/v1/levels",
+              "host": [
+                "{{admin_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "levels"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Labels",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{admin_url}}/api/v1/labels",
+              "host": [
+                "{{admin_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "labels"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Jenis Dana",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{admin_url}}/api/v1/jenis-dana",
+              "host": [
+                "{{admin_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "jenis-dana"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Jenis Harta",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{admin_url}}/api/v1/jenis-harta",
+              "host": [
+                "{{admin_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "jenis-harta"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Label Info Dana",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{admin_url}}/api/v1/label-info-dana",
+              "host": [
+                "{{admin_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "label-info-dana"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Tema",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{admin_url}}/api/v1/tema",
+              "host": [
+                "{{admin_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "tema"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Kategori Acara",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{admin_url}}/api/v1/kategori-acara",
+              "host": [
+                "{{admin_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "kategori-acara"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Kategori Cerita",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{admin_url}}/api/v1/kategori-cerita",
+              "host": [
+                "{{admin_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "kategori-cerita"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Kategori Donasi",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{admin_url}}/api/v1/kategori-donasi",
+              "host": [
+                "{{admin_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "kategori-donasi"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Kategori Postingan",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{admin_url}}/api/v1/kategori-postingan",
+              "host": [
+                "{{admin_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "kategori-postingan"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🕌 Masjid & Rekap",
+      "description": "Data masjid, detail, pengurus, dan rekap keuangan",
+      "item": [
+        {
+          "name": "Detail Masjid by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{masjid_url}}/api/v1/masjid/detail/{{id_masjid}}",
+              "host": [
+                "{{masjid_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "masjid",
+                "detail",
+                "{{id_masjid}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Masjid",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{masjid_url}}/api/v1/masjid/list?page=1&per_page=10",
+              "host": [
+                "{{masjid_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "masjid",
+                "list"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "per_page",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Masjid by Wilayah",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{masjid_url}}/api/v1/masjid/by-wilayah?id_provinsi=1&page=1&per_page=10",
+              "host": [
+                "{{masjid_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "masjid",
+                "by-wilayah"
+              ],
+              "query": [
+                {
+                  "key": "id_provinsi",
+                  "value": "1"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "per_page",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Pengurus Masjid",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{masjid_url}}/api/v1/masjid/pengurus/{{id_masjid}}",
+              "host": [
+                "{{masjid_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "masjid",
+                "pengurus",
+                "{{id_masjid}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Rekap Penerimaan",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{masjid_url}}/api/v1/rekap/penerimaan",
+              "host": [
+                "{{masjid_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "rekap",
+                "penerimaan"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Rekap Pengeluaran",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{masjid_url}}/api/v1/rekap/pengeluaran",
+              "host": [
+                "{{masjid_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "rekap",
+                "pengeluaran"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Rekap by Masjid",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{masjid_url}}/api/v1/rekap/by-masjid/{{id_masjid}}",
+              "host": [
+                "{{masjid_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "rekap",
+                "by-masjid",
+                "{{id_masjid}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "💰 Bukukas (Kas)",
+      "description": "Data penerimaan dan pengeluaran kas masjid",
+      "item": [
+        {
+          "name": "Penerimaan - List",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{transaction_url}}/api/v1/bukukas-penerimaan/list?page=1&per_page=10",
+              "host": [
+                "{{transaction_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "bukukas-penerimaan",
+                "list"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "per_page",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Penerimaan - Command Center",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{transaction_url}}/api/v1/bukukas-penerimaan/command-center",
+              "host": [
+                "{{transaction_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "bukukas-penerimaan",
+                "command-center"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Pengeluaran - List",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{transaction_url}}/api/v1/bukukas-pengeluaran/list?page=1&per_page=10",
+              "host": [
+                "{{transaction_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "bukukas-pengeluaran",
+                "list"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "per_page",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Pengeluaran - Command Center",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{transaction_url}}/api/v1/bukukas-pengeluaran/command-center",
+              "host": [
+                "{{transaction_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "bukukas-pengeluaran",
+                "command-center"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "👥 Users",
+      "description": "Manajemen pengguna: list, detail, register, update, delete",
+      "item": [
+        {
+          "name": "List Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{auth_url}}/api/v1/users/list",
+              "host": [
+                "{{auth_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "list"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Detail User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{auth_url}}/api/v1/users/detail/{{id_user}}",
+              "host": [
+                "{{auth_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "detail",
+                "{{id_user}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Register User (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "nama",
+                  "value": "Nama User Baru",
+                  "type": "text"
+                },
+                {
+                  "key": "email",
+                  "value": "user_baru@example.com",
+                  "type": "text"
+                },
+                {
+                  "key": "jk",
+                  "value": "Laki-laki",
+                  "type": "text"
+                },
+                {
+                  "key": "alamat",
+                  "value": "Jl. Contoh No. 456",
+                  "type": "text"
+                },
+                {
+                  "key": "nohp",
+                  "value": "081234567891",
+                  "type": "text"
+                },
+                {
+                  "key": "id_jalur_akses",
+                  "value": "M001",
+                  "type": "text"
+                },
+                {
+                  "key": "id_labels",
+                  "value": "1",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{auth_url}}/api/v1/users/register",
+              "host": [
+                "{{auth_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "register"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "nama",
+                  "value": "Nama Diupdate",
+                  "type": "text"
+                },
+                {
+                  "key": "nohp",
+                  "value": "081234567892",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{auth_url}}/api/v1/users/update/{{id_user}}",
+              "host": [
+                "{{auth_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "update",
+                "{{id_user}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{auth_url}}/api/v1/users/delete/{{id_user}}",
+              "host": [
+                "{{auth_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "delete",
+                "{{id_user}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📄 Content Publik",
+      "description": "Konten publik: home, informasi, kajian, acara, cerita, donasi, postingan, panduan, pengumuman, dan konten dinamis",
+      "item": [
+        {
+          "name": "Home (Beranda)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{content_url}}/api/v1/home",
+              "host": [
+                "{{content_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "home"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Informasi - List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{content_url}}/api/v1/informasi",
+              "host": [
+                "{{content_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "informasi"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Informasi - Detail by Slug",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{content_url}}/api/v1/informasi/{{slug}}",
+              "host": [
+                "{{content_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "informasi",
+                "{{slug}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Kajian - List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{content_url}}/api/v1/kajian",
+              "host": [
+                "{{content_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "kajian"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Kajian - Detail by Slug",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{content_url}}/api/v1/kajian/{{slug}}",
+              "host": [
+                "{{content_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "kajian",
+                "{{slug}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Acara - List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{content_url}}/api/v1/acara",
+              "host": [
+                "{{content_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "acara"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Acara - Detail by Slug",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{content_url}}/api/v1/acara/{{slug}}",
+              "host": [
+                "{{content_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "acara",
+                "{{slug}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Cerita - List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{content_url}}/api/v1/cerita",
+              "host": [
+                "{{content_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cerita"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Cerita - Detail by Slug",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{content_url}}/api/v1/cerita/{{slug}}",
+              "host": [
+                "{{content_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cerita",
+                "{{slug}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Donasi - List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{content_url}}/api/v1/donasi",
+              "host": [
+                "{{content_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "donasi"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Donasi - Detail by Slug",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{content_url}}/api/v1/donasi/{{slug}}",
+              "host": [
+                "{{content_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "donasi",
+                "{{slug}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Postingan - List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{content_url}}/api/v1/postingan",
+              "host": [
+                "{{content_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "postingan"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Postingan - Detail by Slug",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{content_url}}/api/v1/postingan/{{slug}}",
+              "host": [
+                "{{content_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "postingan",
+                "{{slug}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Panduan Pengguna - List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{content_url}}/api/v1/panduan-pengguna",
+              "host": [
+                "{{content_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "panduan-pengguna"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Panduan Pengguna - Detail",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{content_url}}/api/v1/panduan-pengguna/{{slug}}",
+              "host": [
+                "{{content_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "panduan-pengguna",
+                "{{slug}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Panduan Pengelola - List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{content_url}}/api/v1/panduan-pengelola",
+              "host": [
+                "{{content_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "panduan-pengelola"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Panduan Pengelola - Detail",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{content_url}}/api/v1/panduan-pengelola/{{slug}}",
+              "host": [
+                "{{content_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "panduan-pengelola",
+                "{{slug}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Pengumuman - List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{content_url}}/api/v1/pengumuman",
+              "host": [
+                "{{content_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "pengumuman"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Pengumuman - Detail",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{content_url}}/api/v1/pengumuman/{{slug}}",
+              "host": [
+                "{{content_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "pengumuman",
+                "{{slug}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Cari Masjid (Publik)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{masjid_url}}/api/v1/masjid/search?nama=masjid",
+              "host": [
+                "{{masjid_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "masjid",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "nama",
+                  "value": "masjid"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Detail Masjid Publik (Lengkap)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{masjid_url}}/api/v1/masjid/{{slug}}",
+              "host": [
+                "{{masjid_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "masjid",
+                "{{slug}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Repository - List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{content_url}}/api/v1/repository",
+              "host": [
+                "{{content_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "repository"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Dokumentasi Pengembangan - List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{content_url}}/api/v1/dokumentasi-pengembangan",
+              "host": [
+                "{{content_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "dokumentasi-pengembangan"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Dokumentasi Pengujian - List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{content_url}}/api/v1/dokumentasi-pengujian",
+              "host": [
+                "{{content_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "dokumentasi-pengujian"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Dokumentasi Sosialisasi - List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{content_url}}/api/v1/dokumentasi-sosialisasi",
+              "host": [
+                "{{content_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "dokumentasi-sosialisasi"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Info Pemberitahuan - List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{content_url}}/api/v1/info-pemberitahuan",
+              "host": [
+                "{{content_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "info-pemberitahuan"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Infografis - List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{content_url}}/api/v1/infografis",
+              "host": [
+                "{{content_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "infografis"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Inspirasi - List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{content_url}}/api/v1/inspirasi",
+              "host": [
+                "{{content_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "inspirasi"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Infovideo - List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{content_url}}/api/v1/infovideo",
+              "host": [
+                "{{content_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "infovideo"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Infoayat - List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{content_url}}/api/v1/infoayat",
+              "host": [
+                "{{content_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "infoayat"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Infohadits - List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{content_url}}/api/v1/infohadits",
+              "host": [
+                "{{content_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "infohadits"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Infodoa - List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{content_url}}/api/v1/infodoa",
+              "host": [
+                "{{content_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "infodoa"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🔄 Sync (Mobile)",
+      "description": "Sinkronisasi data offline-to-online dan online-to-offline untuk aplikasi mobile",
+      "item": [
+        {
+          "name": "Sync Push (Offline → Online)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"data\": {\n        \"masjid\": [\n            {\n                \"id_masjid\": \"M999\",\n                \"nama_masjid\": \"Masjid Baru Sync\",\n                \"alamat_masjid\": \"Jl. Sync No. 1\"\n            }\n        ],\n        \"bukukas_penerimaan\": [\n            {\n                \"id_bukukas_penerimaan\": 999,\n                \"id_jalur_akses\": \"M999\",\n                \"nominal_masuk\": 100000,\n                \"tanggal\": \"2026-07-07\"\n            }\n        ]\n    }\n}"
+            },
+            "url": {
+              "raw": "{{transaction_url}}/api/v1/sync-push",
+              "host": [
+                "{{transaction_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "sync-push"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Sync Pull (Online → Offline)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{transaction_url}}/api/v1/sync-pull",
+              "host": [
+                "{{transaction_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "sync-pull"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Sync Pull (With last_sync)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{transaction_url}}/api/v1/sync-pull?last_sync=2026-01-01",
+              "host": [
+                "{{transaction_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "sync-pull"
+              ],
+              "query": [
+                {
+                  "key": "last_sync",
+                  "value": "2026-01-01"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "⚙️ Admin CRUD",
+      "description": "CRUD admin untuk semua entitas: masjid, content, master, wilayah, detail, transaksi, pengajuan",
+      "item": [
+        {
+          "name": "Masjid CRUD",
+          "description": "Create, Update, Delete masjid",
+          "item": [
+            {
+              "name": "Create Masjid",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "x-api-key",
+                    "value": "{{api_key}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"id_masjid\": \"M999\",\n    \"nama_masjid\": \"Masjid Baru\",\n    \"jenis_masjid\": \"Masjid\",\n    \"alamat_masjid\": \"Jl. Baru No. 1\",\n    \"id_provinsi\": 1,\n    \"id_kabupaten_kota\": 1\n}"
+                },
+                "url": {
+                  "raw": "{{admin_url}}/api/v1/admin/masjid/create",
+                  "host": [
+                    "{{admin_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "masjid",
+                    "create"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Update Masjid",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "x-api-key",
+                    "value": "{{api_key}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"nama_masjid\": \"Masjid Update\",\n    \"alamat_masjid\": \"Jl. Update No. 2\"\n}"
+                },
+                "url": {
+                  "raw": "{{admin_url}}/api/v1/admin/masjid/update/{{id_masjid}}",
+                  "host": [
+                    "{{admin_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "masjid",
+                    "update",
+                    "{{id_masjid}}"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Delete Masjid",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "x-api-key",
+                    "value": "{{api_key}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{admin_url}}/api/v1/admin/masjid/delete/{{id_masjid}}",
+                  "host": [
+                    "{{admin_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "masjid",
+                    "delete",
+                    "{{id_masjid}}"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Sync Detail Masjid (Bulk)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "x-api-key",
+                    "value": "{{api_key}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"fasilitas\": [\n        {\"nama_fasilitas\": \"Musholla\", \"keterangan\": \"Musholla bersih\"}\n    ],\n    \"bank\": [\n        {\"nama_bank\": \"Bank Syariah\", \"norek\": \"1234567890\", \"atas_nama\": \"Masjid\"}\n    ],\n    \"medsos\": [\n        {\"name_medsos\": \"Instagram\", \"url_medsos\": \"https://instagram.com/masjid\"}\n    ]\n}"
+                },
+                "url": {
+                  "raw": "{{admin_url}}/api/v1/admin/masjid/{{id_masjid}}/sync-detail",
+                  "host": [
+                    "{{admin_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "masjid",
+                    "{{id_masjid}}",
+                    "sync-detail"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Content CRUD (Generic)",
+          "description": "CRUD untuk semua tipe konten. Ganti {tipe} dengan: informasi, kajian, acara, cerita, donasi, postingan, panduan-pengguna, panduan-pengelola, pengumuman, repository, dokumentasi-pengembangan, dokumentasi-pengujian, dokumentasi-sosialisasi, info-pemberitahuan, infografis, inspirasi, infovideo, infoayat, infohadits, infodoa",
+          "item": [
+            {
+              "name": "Create Content",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "x-api-key",
+                    "value": "{{api_key}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"judul\": \"Judul Konten Baru\",\n    \"keterangan\": \"Isi konten...\",\n    \"status_aktif\": 1\n}"
+                },
+                "url": {
+                  "raw": "{{admin_url}}/api/v1/admin/content/informasi/create",
+                  "host": [
+                    "{{admin_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "content",
+                    "informasi",
+                    "create"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Update Content",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "x-api-key",
+                    "value": "{{api_key}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"judul\": \"Judul Diupdate\",\n    \"keterangan\": \"Isi diupdate\"\n}"
+                },
+                "url": {
+                  "raw": "{{admin_url}}/api/v1/admin/content/informasi/update/1",
+                  "host": [
+                    "{{admin_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "content",
+                    "informasi",
+                    "update",
+                    "1"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Delete Content",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "x-api-key",
+                    "value": "{{api_key}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{admin_url}}/api/v1/admin/content/informasi/delete/1",
+                  "host": [
+                    "{{admin_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "content",
+                    "informasi",
+                    "delete",
+                    "1"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Master Data CRUD (Generic)",
+          "description": "CRUD untuk master data. Ganti {tipe} dengan: levels, labels, jenis-dana, jenis-harta, jenis-laporan, jenis-perolehan-aset, label-info-dana, tema, kategori-acara, kategori-cerita, kategori-donasi, kategori-postingan, kategori-panduan-pengguna, kategori-panduan-pengelola, kategori-menara-video",
+          "item": [
+            {
+              "name": "Create Master Data",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "x-api-key",
+                    "value": "{{api_key}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"nama_level\": \"Level Baru\"\n}"
+                },
+                "url": {
+                  "raw": "{{admin_url}}/api/v1/admin/master/levels/create",
+                  "host": [
+                    "{{admin_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "master",
+                    "levels",
+                    "create"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Update Master Data",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "x-api-key",
+                    "value": "{{api_key}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"nama_level\": \"Level Update\"\n}"
+                },
+                "url": {
+                  "raw": "{{admin_url}}/api/v1/admin/master/levels/update/1",
+                  "host": [
+                    "{{admin_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "master",
+                    "levels",
+                    "update",
+                    "1"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Delete Master Data",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "x-api-key",
+                    "value": "{{api_key}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{admin_url}}/api/v1/admin/master/levels/delete/1",
+                  "host": [
+                    "{{admin_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "master",
+                    "levels",
+                    "delete",
+                    "1"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Wilayah CRUD (Generic)",
+          "description": "CRUD untuk wilayah. Tipe: provinsi, kabupaten-kota, kecamatan, kelurahan-desa",
+          "item": [
+            {
+              "name": "Create Wilayah",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "x-api-key",
+                    "value": "{{api_key}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"nama_provinsi\": \"Provinsi Baru\"\n}"
+                },
+                "url": {
+                  "raw": "{{admin_url}}/api/v1/admin/wilayah/provinsi/create",
+                  "host": [
+                    "{{admin_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "wilayah",
+                    "provinsi",
+                    "create"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Detail Masjid CRUD (Generic)",
+          "description": "CRUD untuk detail masjid. Tipe: fasilitas, images, dokumen, bank, medsos, logo, mitra-kerjasama, qris, struktur, kegiatan, videos",
+          "item": [
+            {
+              "name": "Create Detail",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "x-api-key",
+                    "value": "{{api_key}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"parent_id\": \"{{id_masjid}}\",\n    \"nama_fasilitas\": \"Fasilitas Baru\",\n    \"keterangan\": \"Keterangan fasilitas\"\n}"
+                },
+                "url": {
+                  "raw": "{{admin_url}}/api/v1/admin/detail/fasilitas/create",
+                  "host": [
+                    "{{admin_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "detail",
+                    "fasilitas",
+                    "create"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Transaksi CRUD (Generic)",
+          "description": "CRUD untuk transaksi. Tipe: bukukas-penerimaan, bukukas-pengeluaran, kas, coa, buku-aset, berkas-laporan, saran-masukan",
+          "item": [
+            {
+              "name": "Create Transaksi",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "x-api-key",
+                    "value": "{{api_key}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"id_jalur_akses\": \"{{id_masjid}}\",\n    \"nominal_masuk\": 500000,\n    \"keterangan\": \"Donasi\",\n    \"tanggal\": \"2026-07-07\",\n    \"jumlah_donatur\": 10\n}"
+                },
+                "url": {
+                  "raw": "{{admin_url}}/api/v1/admin/transaksi/bukukas-penerimaan/create",
+                  "host": [
+                    "{{admin_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "transaksi",
+                    "bukukas-penerimaan",
+                    "create"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Pengajuan Masjid",
+          "description": "CRUD untuk pengajuan masjid baru",
+          "item": [
+            {
+              "name": "List Pengajuan",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "x-api-key",
+                    "value": "{{api_key}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{admin_url}}/api/v1/admin/pengajuan/list",
+                  "host": [
+                    "{{admin_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "pengajuan",
+                    "list"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Create Pengajuan",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "x-api-key",
+                    "value": "{{api_key}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"nama_masjid\": \"Masjid Pengajuan\",\n    \"alamat_masjid\": \"Jl. Pengajuan No. 1\",\n    \"nohp_masjid\": \"081234567893\",\n    \"id_provinsi\": 1,\n    \"id_kabupaten_kota\": 1,\n    \"status_pengajuan\": \"Menunggu\"\n}"
+                },
+                "url": {
+                  "raw": "{{admin_url}}/api/v1/admin/pengajuan/create",
+                  "host": [
+                    "{{admin_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "pengajuan",
+                    "create"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Update Pengajuan",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "x-api-key",
+                    "value": "{{api_key}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"status_pengajuan\": \"Disetujui\"\n}"
+                },
+                "url": {
+                  "raw": "{{admin_url}}/api/v1/admin/pengajuan/update/1",
+                  "host": [
+                    "{{admin_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "pengajuan",
+                    "update",
+                    "1"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Delete Pengajuan",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "x-api-key",
+                    "value": "{{api_key}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{admin_url}}/api/v1/admin/pengajuan/delete/1",
+                  "host": [
+                    "{{admin_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "pengajuan",
+                    "delete",
+                    "1"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

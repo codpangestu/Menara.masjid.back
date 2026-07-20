@@ -1,0 +1,147 @@
+version: "3.8"
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: menara-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-cauburuk123}
+      MYSQL_DATABASE: ${DB_DATABASE:-menara_masjid_revamp}
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 10s
+      retries: 5
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: menara-auth
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: ${DB_DATABASE:-menara_masjid_revamp}
+      DB_USERNAME: root
+      DB_PASSWORD: ${DB_PASSWORD:-cauburuk123}
+      SECRET_KEY: ${SECRET_KEY:-menara-secret-key-change-in-production}
+      API_KEY: ${API_KEY:-menara23apikey}
+      APP_NAME: ${APP_NAME:-MENARA API}
+      APP_VERSION: ${APP_VERSION:-2.0.0}
+      DEBUG: "false"
+      SERVICE_PORT: "8001"
+    command: uvicorn services.auth_service.main:app --host 0.0.0.0 --port 8001
+    depends_on:
+      db:
+        condition: service_healthy
+
+  masjid-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: menara-masjid
+    restart: unless-stopped
+    ports:
+      - "8002:8002"
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: ${DB_DATABASE:-menara_masjid_revamp}
+      DB_USERNAME: root
+      DB_PASSWORD: ${DB_PASSWORD:-cauburuk123}
+      SECRET_KEY: ${SECRET_KEY:-menara-secret-key-change-in-production}
+      API_KEY: ${API_KEY:-menara23apikey}
+      APP_NAME: ${APP_NAME:-MENARA API}
+      APP_VERSION: ${APP_VERSION:-2.0.0}
+      DEBUG: "false"
+      SERVICE_PORT: "8002"
+    command: uvicorn services.masjid_service.main:app --host 0.0.0.0 --port 8002
+    depends_on:
+      db:
+        condition: service_healthy
+
+  content-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: menara-content
+    restart: unless-stopped
+    ports:
+      - "8003:8003"
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: ${DB_DATABASE:-menara_masjid_revamp}
+      DB_USERNAME: root
+      DB_PASSWORD: ${DB_PASSWORD:-cauburuk123}
+      SECRET_KEY: ${SECRET_KEY:-menara-secret-key-change-in-production}
+      API_KEY: ${API_KEY:-menara23apikey}
+      APP_NAME: ${APP_NAME:-MENARA API}
+      APP_VERSION: ${APP_VERSION:-2.0.0}
+      DEBUG: "false"
+      SERVICE_PORT: "8003"
+    command: uvicorn services.content_service.main:app --host 0.0.0.0 --port 8003
+    depends_on:
+      db:
+        condition: service_healthy
+
+  transaction-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: menara-transaction
+    restart: unless-stopped
+    ports:
+      - "8004:8004"
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: ${DB_DATABASE:-menara_masjid_revamp}
+      DB_USERNAME: root
+      DB_PASSWORD: ${DB_PASSWORD:-cauburuk123}
+      SECRET_KEY: ${SECRET_KEY:-menara-secret-key-change-in-production}
+      API_KEY: ${API_KEY:-menara23apikey}
+      APP_NAME: ${APP_NAME:-MENARA API}
+      APP_VERSION: ${APP_VERSION:-2.0.0}
+      DEBUG: "false"
+      SERVICE_PORT: "8004"
+    command: uvicorn services.transaction_service.main:app --host 0.0.0.0 --port 8004
+    depends_on:
+      db:
+        condition: service_healthy
+
+  admin-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: menara-admin
+    restart: unless-stopped
+    ports:
+      - "8005:8005"
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: ${DB_DATABASE:-menara_masjid_revamp}
+      DB_USERNAME: root
+      DB_PASSWORD: ${DB_PASSWORD:-cauburuk123}
+      SECRET_KEY: ${SECRET_KEY:-menara-secret-key-change-in-production}
+      API_KEY: ${API_KEY:-menara23apikey}
+      APP_NAME: ${APP_NAME:-MENARA API}
+      APP_VERSION: ${APP_VERSION:-2.0.0}
+      DEBUG: "false"
+      SERVICE_PORT: "8005"
+    command: uvicorn services.admin_service.main:app --host 0.0.0.0 --port 8005
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  mysql_data:

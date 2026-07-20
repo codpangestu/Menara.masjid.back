@@ -1,0 +1,43 @@
+# cloudbuild.sandbox.yaml — GCP Cloud Build for Sandbox
+steps:
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      - build
+      - -t
+      - asia-southeast2-docker.pkg.dev/${PROJECT_ID}/menara-api/service:${SHORT_SHA}
+      - -t
+      - asia-southeast2-docker.pkg.dev/${PROJECT_ID}/menara-api/service:latest
+      - .
+
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      - push
+      - asia-southeast2-docker.pkg.dev/${PROJECT_ID}/menara-api/service:${SHORT_SHA}
+
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      - push
+      - asia-southeast2-docker.pkg.dev/${PROJECT_ID}/menara-api/service:latest
+
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - menara-api
+      - --image=asia-southeast2-docker.pkg.dev/${PROJECT_ID}/menara-api/service:${SHORT_SHA}
+      - --region=asia-southeast2
+      - --platform=managed
+      - --allow-unauthenticated
+      - --set-env-vars=DB_HOST=${_DB_HOST},DB_PORT=${_DB_PORT},DB_DATABASE=${_DB_DATABASE},DB_USERNAME=${_DB_USERNAME},DB_PASSWORD=${_DB_PASSWORD},SECRET_KEY=${_SECRET_KEY},API_KEY=${_API_KEY},APP_NAME=MENARA API,APP_VERSION=2.0.0,DEBUG=false
+
+substitutions:
+  _DB_HOST: 127.0.0.1
+  _DB_PORT: "3306"
+  _DB_DATABASE: menara_masjid_revamp
+  _DB_USERNAME: root
+  _DB_PASSWORD: cauburuk123
+  _SECRET_KEY: menara-secret-key-change-in-production
+  _API_KEY: menara23apikey
+
+timeout: 1200s
