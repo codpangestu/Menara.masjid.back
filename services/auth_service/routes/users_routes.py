@@ -74,8 +74,10 @@ def update_user(
     alamat: Optional[str] = None,
     nohp: Optional[str] = None,
     id_jalur_akses: Optional[str] = None,
+    id_level: Optional[int] = None,
     id_labels: Optional[int] = None,
     status_aktif: Optional[int] = None,
+    kode_org_baznas: Optional[str] = None,
     x_api_key: Optional[str] = Header(None),
     db: Session = Depends(get_db),
 ):
@@ -85,7 +87,8 @@ def update_user(
     ok = service.update(
         db, id_user, nama=nama, email=email, jk=jk, alamat=alamat,
         nohp=nohp, id_jalur_akses=id_jalur_akses,
-        id_labels=id_labels, status_aktif=status_aktif,
+        id_level=id_level, id_labels=id_labels, status_aktif=status_aktif,
+        kode_org_baznas=kode_org_baznas,
     )
     if not ok:
         return ApiResponse(status_code="404", status="User tidak ditemukan")

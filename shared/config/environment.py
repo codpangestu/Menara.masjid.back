@@ -21,6 +21,9 @@ class Environment(BaseSettings):
     APP_VERSION: str = "2.0.0"
     DEBUG: bool = True
 
+    # CORS: origin frontend tambahan (comma separated, opsional)
+    CORS_ORIGINS: str = ""
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"

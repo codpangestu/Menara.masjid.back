@@ -12,6 +12,7 @@ from fastapi import FastAPI
 from shared.config.environment import env
 from shared.middlewares.error_middleware import global_exception_handler
 from shared.middlewares.logging_middleware import logging_middleware
+from shared.middlewares.cors import setup_cors
 
 from services.transaction_service.routes.bukukas_routes import router as bukukas_router
 from services.transaction_service.routes.sync_routes import router as sync_router
@@ -25,6 +26,7 @@ app = FastAPI(
 
 app.middleware("http")(logging_middleware)
 app.add_exception_handler(Exception, global_exception_handler)
+setup_cors(app)
 
 app.include_router(bukukas_router, prefix="/api/v1", tags=["BukuKas"])
 app.include_router(sync_router, prefix="/api/v1", tags=["Sync"])

@@ -12,6 +12,7 @@ from fastapi import FastAPI
 from shared.config.environment import env
 from shared.middlewares.error_middleware import global_exception_handler
 from shared.middlewares.logging_middleware import logging_middleware
+from shared.middlewares.cors import setup_cors
 
 from services.masjid_service.routes.masjid_routes import router as masjid_router
 from services.masjid_service.routes.wilayah_routes import router as wilayah_router
@@ -25,6 +26,7 @@ app = FastAPI(
 
 app.middleware("http")(logging_middleware)
 app.add_exception_handler(Exception, global_exception_handler)
+setup_cors(app)
 
 app.include_router(masjid_router, prefix="/api/v1", tags=["Masjid"])
 app.include_router(wilayah_router, prefix="/api/v1", tags=["Wilayah"])
