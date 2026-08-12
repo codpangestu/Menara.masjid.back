@@ -263,3 +263,41 @@ CREATE TABLE IF NOT EXISTS kajian (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+
+-- ============================================================
+-- PENGAJUAN MASJID
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS pengajuan_masjid (
+    id_pengajuan INT AUTO_INCREMENT PRIMARY KEY,
+    nama_masjid VARCHAR(255),
+    alamat_masjid TEXT,
+    email_masjid VARCHAR(255),
+    nohp_masjid VARCHAR(50),
+    id_provinsi INT,
+    id_kabupaten_kota INT,
+    id_kecamatan INT,
+    id_kelurahan_desa INT,
+    status_pengajuan VARCHAR(50) DEFAULT 'Menunggu',
+    kode_org_baznas VARCHAR(50),
+    slug_masjid VARCHAR(255),
+    nama_pemohon VARCHAR(255),
+    email_pemohon VARCHAR(255),
+    jk_pemohon VARCHAR(10),
+    nohp_pemohon VARCHAR(50),
+    alamat_pemohon TEXT,
+    id_user INT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS pengajuan_user_masjid (
+    id_pengajuan INT AUTO_INCREMENT PRIMARY KEY,
+    id_masjid VARCHAR(50),
+    nama VARCHAR(255),
+    email VARCHAR(255),
+    nohp VARCHAR(50),
+    status_pengajuan VARCHAR(50) DEFAULT 'Menunggu',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);

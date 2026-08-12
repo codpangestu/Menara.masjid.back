@@ -15,6 +15,17 @@ class PengajuanMasjid(Base):
     id_kecamatan = Column(Integer, nullable=True)
     id_kelurahan_desa = Column(Integer, nullable=True)
     status_pengajuan = Column(String(50), nullable=True, default="Menunggu")
+    # Kode masjid (kode_org_baznas) — diterbitkan LANGSUNG saat pengajuan dibuat
+    # (tidak menunggu approval), dipakai Admin BAZNAS untuk aktivasi masjid + admin.
+    kode_org_baznas = Column(String(50), nullable=True)
+    # Slug masjid — dibuat langsung bersama kode saat pengajuan dibuat.
+    slug_masjid = Column(String(255), nullable=True)
+    # Data admin pemohon (daftar masjid sekaligus admin-nya)
+    nama_pemohon = Column(String(255), nullable=True)
+    email_pemohon = Column(String(255), nullable=True)
+    jk_pemohon = Column(String(10), nullable=True)
+    nohp_pemohon = Column(String(50), nullable=True)
+    alamat_pemohon = Column(Text, nullable=True)
     id_user = Column(Integer, nullable=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)

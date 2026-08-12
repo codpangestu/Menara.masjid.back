@@ -349,7 +349,11 @@ def create_pengajuan(
     if not verify_api_key(x_api_key):
         return ApiResponse(status_code="101", status="API KEY Invalid !")
     result = service.create_pengajuan(db, data)
-    return ApiResponse(data=result)
+    if "error" in result:
+        return ApiResponse(status_code="500", status=result["error"])
+    # Response berisi kode masjid + slug yang diterbitkan langsung, agar pemohon
+    # bisa lanjut ke langkah 2 (daftar admin masjid) dengan kode tsb.
+    return ApiResponse(status_code="000", status="Sukses", data=result)
 
 
 @router.put("/admin/pengajuan/update/{pk_value}")
@@ -361,8 +365,16 @@ def update_pengajuan(
 ):
     if not verify_api_key(x_api_key):
         return ApiResponse(status_code="101", status="API KEY Invalid !")
-    if not service.update_pengajuan(db, pk_value, data):
+    status_req = str((data or {}).get("status_pengajuan", "")).lower()
+    result = service.update_pengajuan(db, pk_value, data)
+    if not result:
         return ApiResponse(status_code="404", status="Data tidak ditemukan")
+    if "error" in result:
+        return ApiResponse(status_code="400", status=result["error"])
+    # Saat disetujui, response menyertakan kode masjid (aktivasi masjid + admin)
+    if status_req == "disetujui":
+        kode = result.get("kode_org_baznas")
+        return ApiResponse(status_code="000", status="Sukses", data={"kode_org_baznas": kode})
     return ApiResponse(status_code="000", status="Sukses")
 
 

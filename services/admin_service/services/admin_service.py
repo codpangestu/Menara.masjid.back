@@ -205,18 +205,139 @@ class AdminService:
     # --- Pengajuan ---
     def list_pengajuan(self, db: Session, page: int = 1, per_page: int = 10) -> dict:
         data, total = list_pengajuan(db, page, per_page)
+        items = []
+        for d in data:
+            item = model_to_dict(d)
+            # Alias `id` (PK id_pengajuan) agar konsisten dengan tipe frontend
+            item["id"] = item.get("id_pengajuan")
+            items.append(item)
         return {
-            "data": [model_to_dict(d) for d in data],
+            "data": items,
             "total": total,
         }
 
     def create_pengajuan(self, db: Session, data: dict) -> dict:
-        obj = create_record(db, PengajuanMasjid, data)
-        return {"id_pengajuan_masjid": obj.id_pengajuan_masjid}
+        """
+        Buat pengajuan masjid (langkah 1). Kode masjid & slug diterbitkan LANGSUNG
+        (bukan menunggu approval) agar pemohon bisa langsung melanjutkan ke langkah 2
+        (daftar admin masjid dengan kode tsb). Record masjid & user admin baru dibuat
+        saat Admin BAZNAS menyetujui pengajuan.
+        """
+        import secrets
+        from shared.models.masjid import Masjid
 
-    def update_pengajuan(self, db: Session, pk_value: int, data: dict) -> bool:
+        # Generate kode unik (format: MSJ-XXXXXX)
+        kode = None
+        for _ in range(10):
+            candidate = "MSJ-" + secrets.token_hex(3).upper()
+            exists = db.query(Masjid).filter(Masjid.kode_org_baznas == candidate).first()
+            if not exists:
+                kode = candidate
+                break
+        if not kode:
+            return {"error": "Gagal membuat kode masjid. Silakan coba lagi."}
+
+        data["kode_org_baznas"] = kode
+        data["slug_masjid"] = self._make_slug(data.get("nama_masjid"), kode)
+        obj = create_record(db, PengajuanMasjid, data)
+        return {"id": obj.id_pengajuan, "kode_org_baznas": kode, "slug_masjid": obj.slug_masjid}
+
+    def update_pengajuan(self, db: Session, pk_value: int, data: dict) -> dict | None:
+        """
+        Update pengajuan (langkah 2): simpan data admin pemohon.
+        Jika status='disetujui', otomatis AKTIVASI — membuat record masjid
+        (memakai kode yang sudah diterbitkan saat create) + user Admin Masjid
+        dari data pemohon, SEKALIGUS dalam sekali konfirmasi.
+        Mengembalikan dict pengajuan terbaru, dict {"error": ...} jika ada
+        masalah validasi, atau None jika tidak ditemukan.
+        """
+        status = str(data.get("status_pengajuan", "")).lower()
+
+        # Guard: aktivasi memerlukan data admin pemohon lengkap (nama + email),
+        # agar tidak ada masjid teraktivasi tanpa akun Admin Masjid.
+        if status == "disetujui":
+            existing = db.query(PengajuanMasjid).filter(
+                PengajuanMasjid.id_pengajuan == pk_value
+            ).first()
+            if existing is None:
+                return None
+            if not (existing.nama_pemohon and existing.email_pemohon):
+                return {"error": "Data admin pemohon belum lengkap. Pemohon harus menyelesaikan pendaftaran admin masjid terlebih dahulu."}
+
         obj = update_record(db, PengajuanMasjid, pk_value, data)
-        return obj is not None
+        if obj is None:
+            return None
+
+        if status == "disetujui":
+            self._activate_pengajuan(db, obj)
+        return model_to_dict(obj)
+
+    def _activate_pengajuan(self, db: Session, pengajuan: PengajuanMasjid) -> None:
+        """Aktivasi: buat masjid + user Admin Masjid dari data pengajuan (sekali konfirmasi)."""
+        from shared.models.masjid import Masjid
+        from services.auth_service.queries.auth_queries import create_user, get_user_by_email
+        from shared.utils.jwt_helper import get_password_hash
+        from shared.config.constants import (
+            DEFAULT_PASSWORD, DEFAULT_AVATAR, JALUR_MASJID, DEFAULT_USER_LEVEL,
+        )
+
+        kode = pengajuan.kode_org_baznas
+        if not kode:
+            return
+
+        # 1) Buat record masjid (id_masjid = kode masjid)
+        existing = db.query(Masjid).filter(Masjid.kode_org_baznas == kode).first()
+        if not existing:
+            masjid = Masjid(
+                id_masjid=kode,
+                kode_org_baznas=kode,
+                nama_masjid=pengajuan.nama_masjid,
+                alamat_masjid=pengajuan.alamat_masjid,
+                email_masjid=pengajuan.email_pemohon or pengajuan.email_masjid,
+                nohp_masjid=pengajuan.nohp_masjid,
+                id_provinsi=pengajuan.id_provinsi,
+                id_kabupaten_kota=pengajuan.id_kabupaten_kota,
+                id_kecamatan=pengajuan.id_kecamatan,
+                id_kelurahan_desa=pengajuan.id_kelurahan_desa,
+                slug_masjid=pengajuan.slug_masjid or self._make_slug(pengajuan.nama_masjid, kode),
+                status_aktif=1,
+            )
+            db.add(masjid)
+            db.commit()
+            db.refresh(masjid)
+
+        # 2) Buat user Admin Masjid dari data pemohon (jika belum ada / email unik)
+        email = (pengajuan.email_pemohon or "").strip()
+        if email and not get_user_by_email(db, email):
+            user = create_user(
+                db,
+                jalur_akses=JALUR_MASJID,
+                id_jalur_akses=kode,
+                nama=pengajuan.nama_pemohon,
+                jk=pengajuan.jk_pemohon,
+                nohp=pengajuan.nohp_pemohon,
+                email=email,
+                alamat=pengajuan.alamat_pemohon,
+                kode_org_baznas=kode,
+                password=get_password_hash(DEFAULT_PASSWORD),
+                id_level=2,  # Admin Masjid
+                id_labels=1,  # Admin
+                avatar=DEFAULT_AVATAR,
+                status_aktif=1,
+                catatan="Dibuat via persetujuan pengajuan masjid",
+            )
+            pengajuan.id_user = user.id_user
+            db.commit()
+            db.refresh(pengajuan)
+
+    @staticmethod
+    def _make_slug(nama: str | None, suffix: str) -> str:
+        """Buat slug unik dari nama masjid."""
+        import re
+        if not nama:
+            return suffix.lower()
+        base = re.sub(r"[^a-z0-9]+", "-", nama.lower()).strip("-")
+        return f"{base}-{suffix.lower()}" if base else suffix.lower()
 
     def delete_pengajuan(self, db: Session, pk_value: int) -> bool:
         return delete_record(db, PengajuanMasjid, pk_value)
